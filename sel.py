@@ -4,7 +4,7 @@ from instaloader import Instaloader, Profile
 app = FastAPI()
 L = Instaloader()
 
-@app.post("/fetch_instagram_info")
+@app.post("/")
 async def fetch_instagram_info(username: str = Form(...)):
     try:
         profile = Profile.from_username(L.context, username)
