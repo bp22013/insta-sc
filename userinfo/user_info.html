@@ -1,0 +1,29 @@
+<!-- userinfo/templates/userinfo/user_info.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Info</title>
+</head>
+<body>
+    <h1>ユーザー情報検索</h1>
+    <form method="POST">
+        {% csrf_token %}
+        <label for="username">ユーザーIDを入力 :</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">検索</button>
+    </form>
+    {% if user_data %}
+        <h2>ユーザー情報</h2>
+        <p>ユーザーネーム: {{ user_data.username }}</p>
+        <p>名前: {{ user_data.full_name }}</p>
+        <p>バイオグラフィー: {{ user_data.biography }}</p>
+        <img src="{{ user_data.profile_pic_url }}" alt="プロフィール画像">
+    {% endif %}
+    {% if error_message %}
+        <p>{{ error_message }}</p>
+    {% endif %}
+</body>
+</html>
