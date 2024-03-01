@@ -1,13 +1,29 @@
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Request, Form, HTTPException
+from fastapi.templating import Jinja2Templates
 from instaloader import Instaloader, Profile
 
+# FastAPI アプリケーションのインスタンスを作成
 app = FastAPI()
+
+# Jinja2 テンプレートのインスタンスを作成
+templates = Jinja2Templates(directory="templates")
+
+# インスタローダーのインスタンスを作成
 L = Instaloader()
 
-@app.post("/fetch_instagram_info")
-async def fetch_instagram_info(username: str = Form(...)):
+# ユーザー入力フォームを表示するエンドポイント
+@app.get("/")
+async def show_form(request: Request):
+    return templates.TemplateResponse("form.html", {"request": request})
+
+# プロフィール情報を取得するエンドポイント
+@app.post("/download_profile")
+async def download_profile(request: Request, id: str = Form(...)):
     try:
-        profile = Profile.from_username(L.context, username)
+        # プロフィール取得
+        profile = Profile.from_username(L.context, id)
+        
+        # ユーザー情報を取得
         user_info = {
             "username": profile.username,
             "full_name": profile.full_name,
@@ -15,15 +31,8 @@ async def fetch_instagram_info(username: str = Form(...)):
             "followers": profile.followers,
             "followees": profile.followees
         }
-
-        # ユーザーの投稿を取得して画像をダウンロード
-        for post in profile.get_posts():
-            L.download_post(post, target=username)
-
-        return {"user_info": user_info, "message": "プロフィール情報と投稿画像をダウンロードしました"}
+        
+        # テンプレートに結果を渡して表示
+        return templates.TemplateResponse("result.html", {"request": request, "user_info": user_info})
     except Exception as e:
-        return {"error": str(e)}
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+        raise HTTPException(status_code=404, detail=f"Failed to download profile: {e}")
