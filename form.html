@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="jp">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Instagram Profile Downloader</title>
+    <title>User Profile</title>
 </head>
 <body>
-    <h2>スクレイピングシステム</h2>
-    <form action="/download_profile" method="post">
-        <label for="id">Enter Instagram ID:</label><br>
-        <input type="text" id="id" name="id"><br><br>
-        <input type="submit" value="Submit">
-    </form>
+    <h2>User Profile</h2>
+    <p>Username: {{ profile.username }}</p>
+    <p>Full Name: {{ profile.full_name }}</p>
+    <p>Posts: {{ profile.posts }}</p>
+    <p>Followers: {{ profile.followers }}</p>
+    <p>Followees: {{ profile.followees }}</p>
+    <img src="{{ profile.profile_pic_url }}" alt="Profile Picture">
 </body>
 </html>
