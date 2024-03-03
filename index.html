@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram Profile Downloader</title>
+</head>
+<body>
+    <h1>インスタ　スクレイピング</h1>
+    <form id="profileForm">
+        <label for="id">ユーザーIDを入力:</label><br>
+        <input type="text" id="id" name="id"><br>
+        <input type="submit" value="検索">
+    </form>
+
+    <div id="profileInfo"></div>
+
+    <script>
+        const form = document.getElementById('profileForm');
+        const profileInfoDiv = document.getElementById('profileInfo');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const id = document.getElementById('id').value;
+            const response = await fetch('/download_profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ id })
+            });
+
+            const data = await response.json();
+            profileInfoDiv.innerHTML = `<h2>User Profile</h2>
+                                        <p>Username: ${data.username}</p>
+                                        <p>Full Name: ${data.full_name}</p>
+                                        <p>Posts: ${data.posts}</p>
+                                        <p>Followers: ${data.followers}</p>
+                                        <p>Followees: ${data.followees}</p>`;
+        });
+    </script>
+</body>
+</html>
