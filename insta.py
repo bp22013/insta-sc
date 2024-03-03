@@ -1,19 +1,22 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from instaloader import Instaloader, Profile
 
+# Flask アプリケーションのインスタンスを作成
 app = Flask(__name__)
 
 # インスタローダーのインスタンスを作成
 L = Instaloader()
 
+# ルートエンドポイント
 @app.route("/")
 def index():
-    return jsonify({"message": "Welcome to Instagram Profile Downloader!"})
+    return render_template("index.html")
 
-@app.route("/download_profile")
+# フォームデータを受け取り、ユーザー情報を取得するエンドポイント
+@app.route("/download_profile", methods=["POST"])
 def download_profile():
-    id = request.args.get('id')
     try:
+        id = request.form["id"]
         # プロファイル取得
         profile = Profile.from_username(L.context, id)
         
@@ -26,24 +29,15 @@ def download_profile():
             "followees": profile.followees
         }
         
-        # ユーザー情報を返す
+        # ユーザー情報をJSON形式で返す
         return jsonify(user_info)
     except Exception as e:
-        return jsonify({"error": f"Failed to download profile: {e}"}), 404
+        return f"Failed to download profile: {e}", 404
 
-@app.route("/download_posts")
-def download_posts():
-    id = request.args.get('id')
-    try:
-        # プロファイル取得
-        profile = Profile.from_username(L.context, id)
-        
-        # ユーザーの投稿を取得して画像をダウンロード
-        for post in profile.get_posts():
-            L.download_post(post, target=id)
-        return jsonify({"message": "Posts downloaded successfully!"})
-    except Exception as e:
-        return jsonify({"error": f"Failed to download posts: {e}"}), 404
+# HTMLフォームを表示するエンドポイント
+@app.route("/form")
+def form():
+    return render_template("form.html")
 
 if __name__ == "__main__":
     app.run(debug=True)
