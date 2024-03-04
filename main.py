@@ -9,6 +9,7 @@ loader = Instaloader()
 
 origins = [
     "http://localhost:3001",
+    "insta-fron-f3on4j1wc-bp22013s-projects.vercel.app"
 ]
 
 app.add_middleware(
