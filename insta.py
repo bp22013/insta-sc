@@ -1,24 +1,40 @@
-from flask import Flask, request, jsonify
+from fastapi import FastAPI
+from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
+from typing import Optional
 from instaloader import Instaloader, Profile
 
-app = Flask(__name__)
-L = Instaloader()
+app = FastAPI()
+loader = Instaloader()
 
-@app.route('/download_profile', methods=['GET'])
-def download_profile():
+origins = [
+    "http://localhost:3001",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+class User(BaseModel):
+    user_id: str
+
+@app.post("/")
+async def get_user_info(user: User):
     try:
-        id = request.args.get('id')
-        profile = Profile.from_username(L.context, id)
+        profile = Profile.from_username(loader.context, user.user_id)
         user_info = {
             "username": profile.username,
-            "full_name": profile.full_name,
-            "posts": profile.mediacount,
             "followers": profile.followers,
-            "followees": profile.followees
+            "following": profile.followees,
+            "biography": profile.biography,
+            "profile_pic_url": profile.profile_pic_url,
+            # 他のプロフィール情報もここに追加できます
         }
-        return jsonify(user_info)
+        return user_info
     except Exception as e:
-        return jsonify({"error": str(e)}), 404
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+        return {"error": str(e)}
