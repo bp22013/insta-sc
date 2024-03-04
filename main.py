@@ -1,14 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Optional
 from instaloader import Instaloader, Profile
 
 app = FastAPI()
 loader = Instaloader()
 
 origins = [
-    "https://insta-fron-f3on4j1wc-bp22013s-projects.vercel.app/"
+    "https://insta-fron-f3on4j1wc-bp22013s-projects.vercel.app"
 ]
 
 app.add_middleware(
@@ -19,13 +18,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# ユーザー情報モデル
 class User(BaseModel):
     user_id: str
 
+# ユーザー情報を取得するエンドポイント
 @app.post("/")
 async def get_user_info(user: User):
     try:
+        # ユーザーのプロフィール情報を取得
         profile = Profile.from_username(loader.context, user.user_id)
         user_info = {
             "username": profile.username,
@@ -37,4 +38,5 @@ async def get_user_info(user: User):
         }
         return user_info
     except Exception as e:
-        return {"error": str(e)}
+        # エラーが発生した場合、HTTPExceptionを発生させる
+        raise HTTPException(status_code=500, detail="Failed to fetch user info")
