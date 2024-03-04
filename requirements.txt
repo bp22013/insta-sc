@@ -1,6 +1,7 @@
 fastapi
 instaloader==4.7.1
 requests==2.28.2
+pydantic==1.8.3
 pytesseract
 uvicorn
 gunicorn
