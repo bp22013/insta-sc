@@ -7,7 +7,7 @@ app = FastAPI()
 loader = Instaloader()
 
 origins = [
-    "https://insta-fron-gutestpiv-bp22013s-projects.vercel.app"
+    "https://insta-fron-gutestpiv-bp22013s-projects.vercel.app/"
 ]
 
 app.add_middleware(
