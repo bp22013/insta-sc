@@ -1,22 +1,9 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from fastapi.middleware.cors import CORSMiddleware
 from instaloader import Instaloader, Profile
 
 app = FastAPI()
 loader = Instaloader()
-
-origins = [
-    "https://insta-fron-f3on4j1wc-bp22013s-projects.vercel.app"
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # ユーザー情報モデル
 class User(BaseModel):
